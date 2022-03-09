@@ -1,6 +1,7 @@
 from turtle import right
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
+from django.template import loader
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.request import Request
 from rest_framework.parsers import JSONParser
@@ -12,7 +13,7 @@ from property.serializers import PropertySerializer
 # Create your views here.
 @csrf_exempt
 @api_view(['GET', 'POST'])
-def property_list(request: Request):
+def property_list_api(request: Request):
     rightmove_id = request.query_params.get('rightmove_id')
     if request.method == 'GET':
         if rightmove_id is None:
@@ -37,7 +38,7 @@ def property_list(request: Request):
 
 @csrf_exempt
 @api_view(['GET', 'PUT', 'DELETE'])
-def property_detail(request: Request, pk):
+def property_detail_api(request: Request, pk):
     try:
         item = Property.objects.get(pk=pk)
     except Property.DoesNotExist:
@@ -58,3 +59,13 @@ def property_detail(request: Request, pk):
     elif request.method == 'DELETE':
         item.delete()
         return HttpResponse(status=204)
+
+
+def index(request):
+    property_list = Property.objects.order_by("-baths").all()
+    template = loader.get_template('property/index.html')
+    context = {
+        'property_list': property_list
+    }
+    return HttpResponse(template.render(context, request))
+    
