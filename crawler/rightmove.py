@@ -104,7 +104,7 @@ class RightmoveCrawler(Thread):
             'distance': item['distance'],
             'beds': item['bedrooms'],
             'baths': item['bathrooms'] or 0,
-            'url': 'https://www.rightmove.co.uk/' + item['propertyUrl'],
+            'url': 'https://www.rightmove.co.uk' + item['propertyUrl'],
             'price_pcm': self.extract_price(item['price']['displayPrices'][0]['displayPrice']),
             'price_pw': self.extract_price(item['price']['displayPrices'][1]['displayPrice']),
             'available_date': '1970-01-01',
@@ -120,6 +120,7 @@ class RightmoveCrawler(Thread):
         })
         check_result: list = json.loads(check_res.data.decode("utf-8"))
         if len(check_result) > 0:
+            logging.info("Update Property %s", rightmove_id)
             instance = check_result[0]
             instance_id = instance['id']
             save_res: HTTPResponse = self.http.request("PUT", f"{DJANGO_URL}{instance_id}/", body=item_body, headers=headers)
