@@ -6,6 +6,7 @@ class PropertySerializer(serializers.Serializer):
     Serializeer for Property
     """
     id = serializers.IntegerField(read_only=True)
+    rightmove_id = serializers.IntegerField()
     title = serializers.CharField(max_length=255)
     type_name = serializers.CharField()
     distance = serializers.FloatField()
@@ -21,6 +22,7 @@ class PropertySerializer(serializers.Serializer):
         return Property.objects.create(**validated_data)
     
     def update(self, instance, validated_data):
+        instance.rightmove_id = validated_data.get('rightmove_id', instance.rightmove_id)
         instance.title = validated_data.get('title', instance.title)
         instance.type_name = validated_data.get('type_name', instance.type_name)
         instance.distance = validated_data.get('distance', instance.distance)

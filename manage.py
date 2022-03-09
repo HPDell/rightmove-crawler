@@ -2,6 +2,8 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
+from threading import Thread
+from crawler.rightmove import RightmoveCrawler
 
 
 def main():
@@ -19,4 +21,6 @@ def main():
 
 
 if __name__ == '__main__':
+    # rightmove = RightmoveCrawler(name="rightmove_crawler")
+    # rightmove.start()
     main()
