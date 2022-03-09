@@ -22,6 +22,7 @@ class RightmoveCrawler(Thread):
         self.http = urllib3.PoolManager()
     
     def run(self):
+        self.http.request("DELETE", DJANGO_URL)
         property_type_list = [
             ('houses', 'detached,semi-detached,terraced'),
             ('flats', 'flat')

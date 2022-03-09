@@ -1,6 +1,6 @@
 from turtle import right
 from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpRequest
 from django.template import loader
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.request import Request
@@ -12,7 +12,7 @@ from property.serializers import PropertySerializer
 
 # Create your views here.
 @csrf_exempt
-@api_view(['GET', 'POST'])
+@api_view(['GET', 'POST', 'DELETE'])
 def property_list_api(request: Request):
     rightmove_id = request.query_params.get('rightmove_id')
     if request.method == 'GET':
@@ -30,6 +30,12 @@ def property_list_api(request: Request):
             serializer.save()
             return JsonResponse(serializer.data, status=201)
         return JsonResponse(serializer.errors, status=400)
+    
+    elif request.method == 'DELETE':
+        property_list = Property.objects.all()
+        for item in property_list:
+            item.delete()
+        return HttpResponse(status=204) 
     
     return JsonResponse({
         'message': 'Unsupported method.'
@@ -61,7 +67,7 @@ def property_detail_api(request: Request, pk):
         return HttpResponse(status=204)
 
 
-def index(request):
+def index(request: HttpRequest):
     property_list = Property.objects.order_by("-baths").all()
     template = loader.get_template('property/index.html')
     context = {
