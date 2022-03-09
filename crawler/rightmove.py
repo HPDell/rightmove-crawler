@@ -22,11 +22,25 @@ class RightmoveCrawler(Thread):
         self.http = urllib3.PoolManager()
     
     def run(self):
-        while True:
+        logging.info("Crawler rightmove start.")
+        global timer
+        try:
+            timer = Timer(10, self.repeat)
+            timer.start()
+        except Exception as e:
+            e.with_traceback(e.__traceback__)
+    
+    def repeat(self):
+        self.crawl()
+        try:
             global timer
-            timer = Timer(3600*6, self.crawl)
+            timer = Timer(3600*6, self.repeat)
+            timer.start()
+        except Exception as e:
+            e.with_traceback(e.__traceback__)
     
     def crawl(self):
+        logging.info("Begin crawling")
         self.http.request("DELETE", DJANGO_URL)
         property_type_list = [
             ('houses', 'detached,semi-detached,terraced'),
@@ -138,6 +152,7 @@ class RightmoveCrawler(Thread):
                 logging.error(f"Property {rightmove_id} save failed.")
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
+    logging.warning("crawler from main")
     crawler = RightmoveCrawler()
     crawler.run()
