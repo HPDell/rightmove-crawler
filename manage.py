@@ -21,6 +21,6 @@ def main():
 
 
 if __name__ == '__main__':
-    # rightmove = RightmoveCrawler(name="rightmove_crawler")
-    # rightmove.start()
+    rightmove = RightmoveCrawler(name="rightmove_crawler")
+    rightmove.start()
     main()

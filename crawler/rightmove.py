@@ -1,4 +1,4 @@
-from threading import Thread
+from threading import Thread, Timer
 import urllib3
 from urllib3.response import HTTPResponse
 from lxml import html
@@ -22,6 +22,11 @@ class RightmoveCrawler(Thread):
         self.http = urllib3.PoolManager()
     
     def run(self):
+        while True:
+            global timer
+            timer = Timer(3600*6, self.crawl)
+    
+    def crawl(self):
         self.http.request("DELETE", DJANGO_URL)
         property_type_list = [
             ('houses', 'detached,semi-detached,terraced'),
