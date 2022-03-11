@@ -22,22 +22,25 @@ class RightmoveCrawler(Thread):
         self.http = urllib3.PoolManager()
     
     def run(self):
-        logging.info("Crawler rightmove start.")
-        global timer
-        try:
-            timer = Timer(10, self.repeat)
-            timer.start()
-        except Exception as e:
-            e.with_traceback(e.__traceback__)
+        logging.info("Crawler rightmove's first crawl after 60 seconds.")
+        while True:
+            sleep(60)
+            try:
+                self.crawl()
+                break
+            except Exception as e:
+                e.with_traceback(e.__traceback__)
+                logging.info("Crawler rightmove's first crawl failed. Trying...")
+        logging.info("Crawler rightmove's first crawl succeed. Repeating...")
+        self.repeat()
     
     def repeat(self):
-        self.crawl()
-        try:
-            global timer
-            timer = Timer(3600*6, self.repeat)
-            timer.start()
-        except Exception as e:
-            e.with_traceback(e.__traceback__)
+        while True:
+            sleep(3600*6)
+            try:
+                self.crawl()
+            except Exception as e:
+                e.with_traceback(e.__traceback__)
     
     def crawl(self):
         logging.info("Begin crawling")
