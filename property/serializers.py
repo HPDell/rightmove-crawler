@@ -17,6 +17,7 @@ class PropertySerializer(serializers.Serializer):
     price_pw = serializers.IntegerField()
     available_date = serializers.DateField()
     deposit = serializers.IntegerField()
+    furnished = serializers.BooleanField()
 
     def create(self, validated_data):
         return Property.objects.create(**validated_data)
@@ -33,5 +34,6 @@ class PropertySerializer(serializers.Serializer):
         instance.price_pw = validated_data.get('price_pw', instance.price_pw)
         instance.available_date = validated_data.get('available_date', instance.available_date)
         instance.deposit = validated_data.get('deposit', instance.deposit)
+        instance.furnished = validated_data.get('furnished', instance.furnished)
         instance.save()
         return instance

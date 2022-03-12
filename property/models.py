@@ -14,5 +14,6 @@ class Property(models.Model):
     url = models.URLField()
     price_pcm = models.PositiveIntegerField()
     price_pw = models.PositiveIntegerField()
-    available_date = models.DateField()
-    deposit = models.PositiveIntegerField()
+    available_date = models.DateField(blank=True)
+    deposit = models.PositiveIntegerField(blank=True)
+    furnished = models.BooleanField(blank=True)

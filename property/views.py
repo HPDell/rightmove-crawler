@@ -68,7 +68,7 @@ def property_detail_api(request: Request, pk):
 
 
 def index(request: HttpRequest):
-    property_list = Property.objects.order_by("-baths").all()
+    property_list = Property.objects.order_by("-baths", "type_name").all()
     template = loader.get_template('property/index.html')
     context = {
         'property_list': property_list

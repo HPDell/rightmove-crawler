@@ -1,3 +1,4 @@
+from typing import List
 from threading import Thread, Timer
 import urllib3
 from urllib3.response import HTTPResponse
@@ -5,6 +6,7 @@ from lxml import html
 import json
 import re
 from time import sleep
+from datetime import  datetime
 import logging
 logging.basicConfig(level=logging.INFO)
 
@@ -24,7 +26,7 @@ class RightmoveCrawler(Thread):
     def run(self):
         logging.info("Crawler rightmove's first crawl after 60 seconds.")
         while True:
-            sleep(60)
+            # sleep(60)
             try:
                 self.crawl()
                 break
@@ -44,7 +46,7 @@ class RightmoveCrawler(Thread):
     
     def crawl(self):
         logging.info("Begin crawling")
-        self.http.request("DELETE", DJANGO_URL)
+        # self.http.request("DELETE", DJANGO_URL)
         property_type_list = [
             ('houses', 'detached,semi-detached,terraced'),
             ('flats', 'flat')
@@ -59,6 +61,7 @@ class RightmoveCrawler(Thread):
             for item in page_first['properties']:
                 logging.info('Property %s, %s', item['id'], property_type[0])
                 self.save_item(item)
+                sleep(1)
             pn_total = int(page_first['pagination']['total'])
             pn_now = int(page_first['pagination']['page'])
             if pn_total > 1:
@@ -70,6 +73,7 @@ class RightmoveCrawler(Thread):
                         for item in page_now['properties']:
                             logging.info('Property %s, %s', item['id'], property_type[0])
                             self.save_item(item)
+                            sleep(1)
         else:
             logging.error('Cannot find first page.')
     
@@ -120,6 +124,7 @@ class RightmoveCrawler(Thread):
             return 0
     
     def save_item(self, item):
+        item_url = 'https://www.rightmove.co.uk' + item['propertyUrl']
         item_data = {
             'rightmove_id': item['id'],
             'title': item['displayAddress'],
@@ -127,12 +132,32 @@ class RightmoveCrawler(Thread):
             'distance': item['distance'],
             'beds': item['bedrooms'],
             'baths': item['bathrooms'] or 0,
-            'url': 'https://www.rightmove.co.uk' + item['propertyUrl'],
+            'url': item_url,
             'price_pcm': self.extract_price(item['price']['displayPrices'][0]['displayPrice']),
             'price_pw': self.extract_price(item['price']['displayPrices'][1]['displayPrice']),
             'available_date': '1970-01-01',
             'deposit': 0,
+            'furnished': True
         }
+        detail_page = self.http.request("GET", item_url).data.decode("utf-8", errors="replace")
+        detail_tree: html.HtmlElement = html.fromstring(detail_page)
+        detail_root: List[html.HtmlElement] = detail_tree.xpath("//h2[.='Letting details']/../dl")
+        if len(detail_root) > 0:
+            for di in detail_root[0].xpath("div"):
+                if di is not None:
+                    dt = di.xpath("dt")
+                    dd = di.xpath("dd")
+                    di_title: str = dt[0].text_content() if len(dt) > 0 else None
+                    di_desc: str = dd[0].text_content() if len(dd) > 0 else None
+                    if di_title is None:
+                        continue
+                    if di_title.startswith("Let available date"):
+                        avaliable_date = datetime.strptime(di_desc, "%d/%m/%Y") if di_desc != "Now" else datetime.now()
+                        item_data['available_date'] = avaliable_date.strftime("%Y-%m-%d") 
+                    elif di_title.startswith("Furnish type"):
+                        item_data['furnished'] = di_desc == "Furnished"
+                    elif di_title.startswith("Deposit"):
+                        item_data['deposit'] = self.extract_price(di_desc)
         item_body = json.dumps(item_data).encode('utf-8')
         headers = {
             "Content-Type": "application/json"
