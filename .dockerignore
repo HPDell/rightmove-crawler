@@ -1,3 +1,5 @@
 .devcontainer
 .mypy_cache
 .vscode
+.git
+__pycache__
