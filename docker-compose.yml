@@ -12,6 +12,7 @@ services:
     environment:
       - DATABASE_USER=admin
       - DATABASE_PASSWORD=mypassword
+      - ALLOWED_HOSTS=localhost
 
   db:
     image: postgres:latest
