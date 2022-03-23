@@ -63,11 +63,15 @@
             </div>
             <div class="col text-center">
                 <nav aria-label="pagination">
-                    <ul class="pagination">
+                    <ul class="pagination justify-content-center">
                         {% if page.has_previous %}
-                        <li class="page-item"><a href="#" class="page-link">Previous</a></li>
+                        <li class="page-item"><a href="#" class="page-link">
+                            <span>&laquo;</span>
+                        </a></li>
                         {% else %}
-                        <li class="page-item disabled"><a href="/?page={{previous_page_number}}&offset={{paginator.per_page}}" class="page-link">Previous</a></li>
+                        <li class="page-item disabled"><a href="/?page={{previous_page_number}}&offset={{paginator.per_page}}" class="page-link">
+                            <span>&laquo;</span>
+                        </a></li>
                         {% endif %}
                         {% for item in page_range %}
                             {% if item == paginator.ELLIPSIS %}
@@ -79,9 +83,13 @@
                             {% endif %}
                         {% endfor %}
                         {% if page.has_next %}
-                        <li class="page-item"><a href="/?page={{page.next_page_number}}&offset={{paginator.per_page}}" class="page-link">Next</a></li>
+                        <li class="page-item"><a href="/?page={{page.next_page_number}}&offset={{paginator.per_page}}" class="page-link">
+                            <span>&raquo;</span>
+                        </a></li>
                         {% else %}
-                        <li class="page-item disabled"><a href="#" class="page-link">Next</a></li>
+                        <li class="page-item disabled"><a href="#" class="page-link">
+                            <span>&raquo;</span>
+                        </a></li>
                         {% endif %}
                     </ul>
                 </nav>
