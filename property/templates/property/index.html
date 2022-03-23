@@ -65,11 +65,11 @@
                 <nav aria-label="pagination">
                     <ul class="pagination justify-content-center">
                         {% if page.has_previous %}
-                        <li class="page-item"><a href="#" class="page-link">
+                        <li class="page-item"><a href="/?page={{page.previous_page_number}}&offset={{paginator.per_page}}" class="page-link">
                             <span>&laquo;</span>
                         </a></li>
                         {% else %}
-                        <li class="page-item disabled"><a href="/?page={{previous_page_number}}&offset={{paginator.per_page}}" class="page-link">
+                        <li class="page-item disabled"><a href="#" class="page-link">
                             <span>&laquo;</span>
                         </a></li>
                         {% endif %}
