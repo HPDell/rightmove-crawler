@@ -1,6 +1,6 @@
-from turtle import right
-from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse, HttpRequest
+from django.core.paginator import Paginator
+from django.shortcuts import redirect, render
+from django.http import HttpResponse, HttpResponseNotAllowed, JsonResponse, HttpRequest
 from django.template import loader
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.request import Request
@@ -68,10 +68,23 @@ def property_detail_api(request: Request, pk):
 
 
 def index(request: HttpRequest):
-    property_list = Property.objects.order_by("-baths", "type_name").all()
-    template = loader.get_template('property/index.html')
-    context = {
-        'property_list': property_list
-    }
-    return HttpResponse(template.render(context, request))
+    if request.method == 'GET':
+        offset = int(request.GET.get('offset', 20))
+        page = int(request.GET.get('page', 1))
+        if offset < 10:
+            return redirect(to=f'/?offset={offset}&page={page}')
+        property_all = Property.objects.order_by("-baths", "type_name").all()
+        paginator = Paginator(property_all, offset)
+        if page > paginator.num_pages:
+            return redirect(to=f'/?offset={offset}&page={paginator.num_pages}')
+        elif page < 1:
+            return redirect(to=f'/?offset={offset}&page=1')
+        else:
+            return render(request, 'property/index.html', {
+                'page': paginator.page(page),
+                'paginator': paginator,
+                'page_range': paginator.get_elided_page_range(page),
+            })
+    
+    return HttpResponseNotAllowed(['GET'])
     

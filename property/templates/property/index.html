@@ -14,7 +14,7 @@
         </div>
     </nav>
     <div class="container">
-        {% if property_list %}
+        {% if page.object_list %}
         <table class="table table-hover">
             <thead>
                 <th>Title</th>
@@ -25,7 +25,7 @@
                 <th>Furnish</th>
             </thead>
             <tbody>
-                {% for property in property_list %}
+                {% for property in page.object_list %}
                 <tr>
                     <td><a href="{{ property.url }}">{{ property.title }}</a></td>
                     <td>{{ property.type_name }}</td>
@@ -37,6 +37,50 @@
                 {% endfor %}
             </tbody>
         </table>
+        <div class="row">
+            <div class="col text-start">
+                <div class="dropdown">
+                    <button class="btn btn-outline-primary dropdown-toggle" type="button" id="offset-dropdown-btn" data-bs-toggle="dropdown" aria-expanded="false">
+                        {{ paginator.per_page }}
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="offset-dropdown-btn">
+                        <li><a href="/?page={{page.number}}&offset={{10}}" class="dropdown-item">10</a></li>
+                        <li><a href="/?page={{page.number}}&offset={{15}}" class="dropdown-item">15</a></li>
+                        <li><a href="/?page={{page.number}}&offset={{20}}" class="dropdown-item">20</a></li>
+                        <li><a href="/?page={{page.number}}&offset={{50}}" class="dropdown-item">50</a></li>
+                        <li><a href="/?page={{page.number}}&offset={{100}}" class="dropdown-item">100</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col text-center">
+                <nav aria-label="pagination">
+                    <ul class="pagination">
+                        {% if page.has_previous %}
+                        <li class="page-item"><a href="#" class="page-link">Previous</a></li>
+                        {% else %}
+                        <li class="page-item disabled"><a href="/?page={{previous_page_number}}&offset={{paginator.per_page}}" class="page-link">Previous</a></li>
+                        {% endif %}
+                        {% for item in page_range %}
+                            {% if item == paginator.ELLIPSIS %}
+                            <li class="page-item disabled"><a href="#" class="page-link">{{item}}</a></li>
+                            {% elif item == page.number %}
+                            <li class="page-item active"><a href="#" class="page-link">{{item}}</a></li>
+                            {% else %}
+                            <li class="page-item"><a href="/?page={{item}}&offset={{paginator.per_page}}" class="page-link">{{item}}</a></li>
+                            {% endif %}
+                        {% endfor %}
+                        {% if page.has_next %}
+                        <li class="page-item"><a href="/?page={{page.next_page_number}}&offset={{paginator.per_page}}" class="page-link">Next</a></li>
+                        {% else %}
+                        <li class="page-item disabled"><a href="#" class="page-link">Next</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+            <div class="col text-end">
+                <p>Total {{paginator.count}} properties.</p>
+            </div>
+        </div>
         {% else %}
         <div class="alert alert-warning" role="alert" style="margin: 1em 0em;">
             No items.
