@@ -19,16 +19,16 @@ class PropertySerializer(serializers.Serializer):
     deposit = serializers.IntegerField()
     furnished = serializers.BooleanField()
 
-    def create(self, validated_data):
+    def create(self, validated_data: dict):
         return Property.objects.create(**validated_data)
     
-    def update(self, instance, validated_data):
+    def update(self, instance: Property, validated_data: dict):
         instance.rightmove_id = validated_data.get('rightmove_id', instance.rightmove_id)
         instance.title = validated_data.get('title', instance.title)
         instance.type_name = validated_data.get('type_name', instance.type_name)
         instance.distance = validated_data.get('distance', instance.distance)
         instance.beds = validated_data.get('beds', instance.beds)
-        instance.baths = validated_data.get('baths', instance.baths)
+        instance.baths = validated_data.get('baths', 0) or instance.baths
         instance.url = validated_data.get('url', instance.url)
         instance.price_pcm = validated_data.get('price_pcm', instance.price_pcm)
         instance.price_pw = validated_data.get('price_pw', instance.price_pw)
