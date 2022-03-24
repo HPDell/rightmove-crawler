@@ -73,7 +73,7 @@ def index(request: HttpRequest):
         page = int(request.GET.get('page', 1))
         if offset < 10:
             return redirect(to=f'/?offset={offset}&page={page}')
-        property_all = Property.objects.order_by("-baths", "type_name").all()
+        property_all = Property.objects.order_by("-baths", "distance", "type_name").all()
         paginator = Paginator(property_all, offset)
         if page > paginator.num_pages:
             return redirect(to=f'/?offset={offset}&page={paginator.num_pages}')
