@@ -3,3 +3,4 @@
 .vscode
 .git
 __pycache__
+/static
