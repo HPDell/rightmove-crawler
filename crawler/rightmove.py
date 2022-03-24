@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.INFO)
 
 RIGHTMOVE_URL = 'https://www.rightmove.co.uk/property-to-rent/find.html'
 
-DJANGO_URL = 'http://localhost:8000/api/property/'
+DJANGO_URL = 'http://huyg.site:8001/api/property/'
 
 
 class RightmoveCrawler(Thread):
@@ -26,7 +26,7 @@ class RightmoveCrawler(Thread):
     def run(self):
         logging.info("Crawler rightmove's first crawl after 60 seconds.")
         while True:
-            # sleep(60)
+            sleep(60)
             try:
                 self.crawl()
                 break
