@@ -10,9 +10,15 @@ services:
     links:
       - db:db
     environment:
-      - DATABASE_USER=admin
-      - DATABASE_PASSWORD=mypassword
-      - ALLOWED_HOSTS=localhost
+      DATABASE_USER: admin
+      DATABASE_PASSWORD: mypassword
+      ALLOWED_HOSTS: localhost
+      CRAWLER_QUERY_LOCATION: POSTCODE^104917
+      CRAWLER_QUERY_MAX_BED: 4
+      CRAWLER_QUERY_MIN_BED: 4
+      CRAWLER_QUERY_MAX_PRICE: 3000
+      CRAWLER_QUERY_MIN_PRICE: 600
+      CRAWLER_QUERY_RADIUS: 5.0
 
   db:
     image: postgres:latest

@@ -26,6 +26,13 @@ services:
 
     # Use "forwardPorts" in **devcontainer.json** to forward an app port locally.
     # (Adding the "ports" property to this file will not forward from a Codespace.)
+    environment:
+      CRAWLER_QUERY_LOCATION: POSTCODE^104917
+      CRAWLER_QUERY_MAX_BED: 4
+      CRAWLER_QUERY_MIN_BED: 4
+      CRAWLER_QUERY_MAX_PRICE: 3000
+      CRAWLER_QUERY_MIN_PRICE: 600
+      CRAWLER_QUERY_RADIUS: 5.0
 
   db:
     image: postgres:latest

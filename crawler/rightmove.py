@@ -1,4 +1,5 @@
 from typing import List
+import os
 from threading import Thread, Timer
 import urllib3
 from urllib3.response import HTTPResponse
@@ -13,7 +14,16 @@ logging.basicConfig(level=logging.INFO)
 
 RIGHTMOVE_URL = 'https://www.rightmove.co.uk/property-to-rent/find.html'
 
-DJANGO_URL = 'http://huyg.site:8001/api/property/'
+DJANGO_URL = 'http://localhost:8000/api/property/'
+
+QUERY_TEMPLATE = {
+    'locationIdentifier': os.getenv("CRAWLER_QUERY_LOCATION", "POSTCODE^104917"),
+    'maxBedrooms': int(os.getenv("CRAWLER_QUERY_MAX_BED", "4")),
+    'minBedrooms': int(os.getenv("CRAWLER_QUERY_MIN_BED", "4")),
+    'maxPrice': int(os.getenv("CRAWLER_QUERY_MAX_PRICE", "3000")),
+    'minPrice': int(os.getenv("CRAWLER_QUERY_MIN_PRICE", "600")),
+    'radius': float(os.getenv("CRAWLER_QUERY_RADIUS", "5.0"))
+}
 
 
 class RightmoveCrawler(Thread):
@@ -80,12 +90,7 @@ class RightmoveCrawler(Thread):
 
     def get_page(self, page_number, property_type):
         query = {
-            'locationIdentifier': 'POSTCODE^104917',
-            'maxBedrooms': 4,
-            'minBedrooms': 4,
-            'maxPrice': 3000,
-            'minPrice': 600,
-            'radius': 5.0,
+            **QUERY_TEMPLATE,
             'propertyTypes': property_type[1],
             'primaryDisplayPropertyType': property_type[0],
             'includeLetAgreed': 'false',
